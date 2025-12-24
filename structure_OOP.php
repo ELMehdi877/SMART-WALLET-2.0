@@ -1,21 +1,15 @@
 <?php
-class user{
+class User{
     // Visibilité (Access Modifiers) && attribute(proprieté)
     private $id;
     private $fullname;
     private $email;
     private $password;
 
-    ### composition de user avec (category , income ,expense)
+    ### composition de user avec category
 
     //tableau contient tous les categories de l'utilisateur
     private $categories = [];
-
-    //tableau contient tous les incomes de l'utilisateur
-    private $incomse = [];
-
-    //tableau contient tous les expenses de l'utilisateur
-    private $expenses = [];
 
     //fonction pour remplie les proprieté
     public function __construct($full_name,$em_ail,$pass_word){
@@ -25,7 +19,16 @@ class user{
     }
 
     //fonction pour inseré les donnés sur database
-    public function register(){}
+    public function register($pdo){
+        $sql = "INSERT INTO users(fullname,email,password) VALUES (?,?,?)";
+
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+        $this->fullname ,
+        $this->email ,
+        $this->password,
+        ]);
+    }
 
     //fonction pour verifier l'utilisateur existe
     public function login($email,$password){}
@@ -33,28 +36,19 @@ class user{
     //fonction return les information d'utilisateurs
     public function getByID($id){}
 
-    #### methode composition pour ajouter les objets ($category , $income , $expense) à la fin de ces tableau
+    #### methode composition pour ajouter l'objet $category à la fin de sont tableau
 
     //fonction de ajouter un objet $category a sont tableau categories
     public function addCategory(Category $category){
         $this->categories[] = $category;
     }
 
-    //fonction de ajouter un objet $income a sont tableau incomes
-    public function addincome(Income $incomse){
-        $this->incomes[] = $income;
-    }
-
-    //fonction de ajouter un $expense a sont tableau expenses
-    public function addexpense(Expense $expense){
-        $this->expenses[] =$expense;
-    }
 }
 
 
 
 
-class category{
+class Category{
     // Visibilité (Access Modifiers) && attribute(proprieté)
 
     private $id;
@@ -64,38 +58,54 @@ class category{
     ### composition de category avec (income ,expense)
     
     //tableau contient tous les incomes pour category
-    private $incomse = [];
+    private $incomes = [];
 
     //tableau contient tous les expenses pour category
     private $expenses = [];
     
     //conction 
-    private function create($name){}
-    private function getAll($id){}
+    public function create($name){}
+    public function getAll($id){}
 
     #### methode composition pour ajouter les objets ($category , $income , $expense) à la fin de ces tableau 
     
     //fonction d'ajouter un objet $income a son tableau incomes
-    public function addIncome(incomes $income){
-        $this->incomes = $income;
+    public function addIncome(Incomes $income){
+        $this->incomes[] = $income;
     }
 
     //fonction d'ajouter un objet $expense a son tableau expenses
-    public function addExpense(expenses $expense){
-        $this->expenses = $expense;
+    public function addExpense(Expenses $expense){
+        $this->expenses[] = $expense;
     }
 }
 
-class incomes{
-    private $id;
+class Transaction {
+    // Visibilité (Access Modifiers) && attribute(proprieté)
+    protected $id;
+    protected $category_id;
     protected $amount;
-    protected $description;
-    private $income_date;
+    protected $description; 
     protected $created_at;
+    
+    #### methode d'héritage
+    public function __construct($category_id,$amount,$descriotion,){
+        $this->category_id = $categ;
+        $this->amount = $amoun;
+        $this->description = $desc;
+    }
+    public function creatte(){}
+    public function getByID($id){}
+    public function getByCategory($category_id){}
+    public function update($id){}
+    public function delete($id){}
+}
+
+class Incomes extends Transaction{
+    private $income_date;
 
 }
-class expenses extends incomes{
-    private $id;
+class Expenses extends Transaction{
     private $expense_date;
-    private $created_at;
 }
+
