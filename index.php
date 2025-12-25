@@ -1,54 +1,4 @@
-<?php
-session_start();
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    ####### sign_up #######
-    if (isset($_POST["inscrire_button"]) && isset($_POST["inscrire_fullname"]) && isset($_POST["inscrire_email"]) && isset($_POST["inscrire_password"])) {
-        require "connection.php";
-        require "User.php";
-        $fullname = trim($_POST["inscrire_fullname"]);
-        $inscrire_fullname = trim($_POST["inscrire_fullname"]);
-        $inscrire_email = trim($_POST["inscrire_email"]);
-        $inscrire_password = password_hash($_POST["inscrire_password"],PASSWORD_DEFAULT);
-        
-        $user = new User($fullname,$inscrire_email,$inscrire_password);
-
-        if ($user->register($pdo)) {
-            $_SESSION["inscrire"] = "<p class='text-green-500'>vous avez cree un compte</p>";
-            header("Location: login.php");
-            exit();
-        }
-        else{
-            $_SESSION["inscrire"] = "<p class='text-red-500'>ce utilisateur existe</p>";
-            header("Location: login.php");
-            exit();
-        }
-    }
-
-    ####### login #######
-    elseif (isset($_POST["connexion_button"]) && isset($_POST["connexion_email"]) && isset($_POST["connexion_password"])) {
-        require "connection.php";
-        require "User.php";
-        $connexion_email = trim($_POST["connexion_email"]);
-        $connexion_password = trim($_POST["connexion_password"]);
-        
-        $user = new User("",$connexion_email,"");
-        
-        if ($user->getExiste($pdo)) {
-            $_SESSION["inscrire"] = "<p class='text-green-500'>ce utilisateur existe</p>";
-            header("Location: dashbord.php");
-            exit();
-        }
-        else {
-            $_SESSION["inscrire"] = "<p class='text-red-500'>ce utilisateur n'existe pas </p>";
-            
-        }
-        header("Location: login.php");
-        exit();
-    }
-}
-?>
-
+<?php session_start();?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -127,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </form>
 
             <!-- Formulaire d'Inscription (Caché par défaut) -->
-            <form id="form-signup" action="login.php" method="POST" class="form-container space-y-5 hidden">
+            <form id="form-signup" action="sign_up.php" method="POST" class="form-container space-y-5 hidden">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Créer un compte</h2>
                     <p class="text-gray-500">Rejoignez-nous dès aujourd'hui</p>

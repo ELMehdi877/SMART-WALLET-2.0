@@ -1,22 +1,5 @@
 <?php session_start(); 
 
-// $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet1","root","");
-
-// $incomeData = array_fill(0, 12, 0);//(index,nombre_de colone,valeur)
-// $expenseData = array_fill(0, 12, 0);
-
-// $stmt = $pdo->query("SELECT MONTH(date) AS mois, SUM(montants) AS total FROM incomes  GROUP BY MONTH(date)");
-// $revenus = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// foreach ($revenus as $row) {
-//     $incomeData[$row['mois'] - 1] = (float)$row['total'];
-// }
-
-// $stmt = $pdo->query("SELECT MONTH(date) AS mois, SUM(montants) AS total FROM expenses GROUP BY MONTH(date)");
-// $depenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// foreach ($depenses as $row) {
-//     $expenseData[$row['mois'] - 1] = (float)$row['total'];
-// }
-
 
 
 ?>

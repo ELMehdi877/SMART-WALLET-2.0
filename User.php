@@ -12,46 +12,56 @@ class User{
     private $categories = [];
 
     //fonction pour remplie les proprieté
-    public function __construct($full_name,$em_ail,$pass_word){
+    public function __construct($id,$full_name,$em_ail,$pass_word){
+        $this->id = $id;
         $this->fullname = $full_name;
         $this->email = $em_ail;
-        $this->password = password_hash($pass_word,PASSWORD_DEFAULT);
+        $this->password = $pass_word;
     }
 
     //fonction pour inseré les donnés sur database
     public function register($pdo) : bool {
-        if ($this->getExiste($pdo)) {
-            return false;
-        }
-        else {
+        if ($this->getUserByEmail($pdo) === NULL) {
             $sql = "INSERT INTO users(fullname,email,password) VALUES (?,?,?)";
-
+    
             $stmt = $pdo->prepare($sql);
             return $stmt->execute([
             $this->fullname ,
             $this->email ,
             $this->password
             ]);
-            return true ;
+        }
+        else {
+            return false;
         }
     }
 
     //fonction pour verifier l'utilisateur existe
-    public function getExiste($pdo) : ?int{
+    public function getUserByEmail($pdo) : ?array{
         
-        $sql = "SELECT id FROM users WHERE email = ?";
+        $sql = "SELECT id,password FROM users WHERE email = ?";
         $stmt = $pdo->prepare($sql);
         $stmt ->execute([
             $this->email
         ]);
         $existe = $stmt->fetch(PDO::FETCH_ASSOC);
-        $id = $existe["id"] ?? NULL;
-        return $id;
+        if ($existe === false) {
+            return NULL;
+        }
+        return $existe;
     }
+    
 
     //fonction return les information d'utilisateurs
-    public function getByID($pdo) : arry {
-        $sql = "SELECT id FROM users";
+    public function getByID($pdo) : array {
+        $sql = "SELECT id,fullname,email,password
+        FROM users u 
+        WHERE u.id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $this->id 
+        ]);
+        return $user_info = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
