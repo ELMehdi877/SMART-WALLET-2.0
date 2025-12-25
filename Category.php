@@ -22,6 +22,7 @@ class Category{
     
     //fonction d'ajouter un objet $income a son tableau incomes
     public function addIncome(Incomes $income){
+        $
         $this->incomes[] = $income;
     }
 

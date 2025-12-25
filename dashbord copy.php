@@ -166,9 +166,12 @@ if (!isset($_SESSION["user_id"])) {
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Revenus</p>
-                                 
-                                <p id='totalIncome' class='text-3xl font-bold text-green-500'> 15 MAD</p>";
-                                
+                                <?php 
+                                $stmt = $pdo->query("SELECT SUM(montants) AS total_revenu FROM incomes");
+                                $results = $stmt->fetch(PDO::FETCH_ASSOC);
+                                $total_revenu = $results['total_revenu'] ?? 0 ;
+                                echo "<p id='totalIncome' class='text-3xl font-bold text-green-500'> {$total_revenu} MAD</p>";
+                                ?>
                             </div>
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full flex items-center justify-center">
@@ -186,7 +189,12 @@ if (!isset($_SESSION["user_id"])) {
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Dépenses</p>
-                                <p id='totalExpense' class='text-3xl font-bold text-red-500'>78 MAD</p>";
+                                <?php 
+                                $stmt = $pdo->query("SELECT SUM(montants) AS total_depense FROM expenses");
+                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                                $total_depense= $result['total_depense'] ?? 0;
+                                echo "<p id='totalExpense' class='text-3xl font-bold text-red-500'>{$total_depense} MAD</p>";
+                                ?>
                             </div>
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-red-100 to-rose-200 rounded-full flex items-center justify-center">
@@ -204,7 +212,18 @@ if (!isset($_SESSION["user_id"])) {
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Solde Actuel</p>
-                                <p id='balance' class='text-3xl font-bold text-{$color}-700'>{$total} MAD</p>
+                                <?php
+                                $stmt1 = $pdo->query("SELECT SUM(montants) AS total_revenu FROM incomes");
+                                $result1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+                                $total_revenu = $result1['total_revenu'];
+
+                                $stmt2 = $pdo->query("SELECT SUM(montants) AS total_depense FROM expenses");
+                                $result2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+                                $total_depense = $result2['total_depense'];
+
+                                $total= ($total_revenu-$total_depense) ?? 0;
+                                $color = ($total >= 0) ? "green" : "red";
+                                echo "<p id='balance' class='text-3xl font-bold text-{$color}-700'>{$total} MAD</p>
                             </div>
                             <div
                                 class='w-14 h-14 bg-gradient-to-br from-{$color}-100 to-indigo-100 rounded-full flex items-center justify-center'>
@@ -212,8 +231,8 @@ if (!isset($_SESSION["user_id"])) {
                                     <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2'
                                     d='M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' />
                                 </svg>
-                            </div>
-                                    
+                            </div>";
+                                    ?>
                         </div>
                     </div>
                 </div>
@@ -225,12 +244,12 @@ if (!isset($_SESSION["user_id"])) {
                         <div class="flex items-center gap-2 sm:gap-3">
                             <span class="text-xl sm:text-2xl">💵</span>
                             <h2 class=" text-lg sm:text-xl lg:text-2xl font-bold text-gray-800">Revenus</h2>
-                            <button onclick="openModal('categoryModal')"
-                                class="ml-30 lg:ml-85 px-4 py-2 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500"
-                                 type="button">Ajouter un Category
-                                
-                            </button>
-                            
+                            <form action="database.php" method="GET" class="ml-30 lg:ml-101">
+                                <input name="incomes_pdf"
+                                class="px-4 py-2 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500"
+                                value="Export PDF" type="submit" name="incomes_pdf"
+                                >
+                            </form>
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center ">
                             <div class="flex items-center w-full gap-2">
@@ -272,15 +291,26 @@ if (!isset($_SESSION["user_id"])) {
                             </thead>
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
                                 
-                               
+                                <?php 
+                                $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet1","root","");
+                                $select = $pdo->prepare("SELECT * FROM incomes");
+                                $select->execute();
+                                $results = $select->fetchAll(PDO::FETCH_ASSOC);
+                                
+                                if (empty($results)) {
+                                    echo "
+            
                                         <tr>
                                             <td colspan='5' class='px-4 py-16 text-center'>
                                                 <div class='text-6xl mb-4 opacity-50'>💰</div>
                                                 <p class='text-gray-400'>Aucun revenu enregistré</p>
                                             </td>
                                         </tr>
-                                 
-                            
+                                        ";
+                                }
+                                else {
+                                    foreach($results as $index => $income){
+                                        echo "
                                         <tr class='hover:bg-gray-50 transition-colors'>
                                             <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['categorie']}</td>
                                             <td class='w-[20%] px-4 py-4'>
@@ -306,7 +336,11 @@ if (!isset($_SESSION["user_id"])) {
                                                 </form>
                                             </td>
                                         </tr>
-                                  
+                                                ";
+                                    }
+                                }
+
+                                ?>
                                 
                             </tbody>
                         </table>
@@ -430,12 +464,22 @@ if (!isset($_SESSION["user_id"])) {
                                 </tr>
                             </thead>
                             <tbody id="expensesBody" class="divide-y divide-gray-200">
-                               <tr>
+                                <?php 
+                                $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet1","root","");
+                                $select = $pdo->prepare("SELECT * FROM expenses");
+                                $select->execute();
+                                $results = $select->fetchAll(PDO::FETCH_ASSOC);
+                                if (empty($results)) {
+                                    echo "<tr>
                                     <td colspan='5' class='px-4 py-16 text-center'>
                                         <div class='text-6xl mb-4 opacity-50'>🛒</div>
                                         <p class='text-gray-400'>Aucune dépense enregistrée</p>
                                     </td>
-                                </tr>
+                                </tr>";
+                                }
+                                else {
+                                    foreach($results as $index => $expense){
+                                        echo "
                                         <tr class='hover:bg-gray-50 transition-colors'>
                                             <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['categorie']}</td>
                                             <td class='w-[20%] px-4 py-4'>
@@ -461,7 +505,10 @@ if (!isset($_SESSION["user_id"])) {
                                                 </form>
                                             </td>
                                         </tr>
-                                    
+                                        ";
+                                    }
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -684,7 +731,6 @@ if (!isset($_SESSION["user_id"])) {
                         </form>
                     </div>
                 </div>
-
                 <!-- Modal modifie Dépense -->
                 <div id="expenseModalModifie"
                     class="hidden flex items-center justify-center px-4 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-y-auto">
@@ -803,56 +849,6 @@ if (!isset($_SESSION["user_id"])) {
                     </div>
                 </div>
                 
-                
-                 <!-- Modal insert Category -->
-                <div id="categoryModal"
-                    class="hidden flex items-center justify-center px-4 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-y-auto">
-                    <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-10 animate-slide-up">
-                        <div class="flex justify-between items-center mb-8">
-                            <div class="flex items-center gap-3">
-                                <span class="text-3xl">💵</span>
-                                <h3 class="text-2xl font-bold text-gray-800">Ajouter un Revenu</h3>
-                            </div>
-                            <button onclick="closeModal('categoryModal')"
-                                class="text-gray-400 hover:text-red-600 text-3xl transition-colors">
-                                &times;
-                            </button>
-                        </div>
-                        <form action="database.php" method="POST" class="space-y-6">
-                    
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
-                                <select name="incomeCategory"  required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                                    <option value="" disabled selected>Choisir une catégorie</option>
-                                    <option value="Salaire">Salaire</option>
-                                    <option value="Prime">Prime</option>
-                                    <option value="Bonus">Bonus</option>
-                                    <option value="Revenus freelancing">Revenus freelancing</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Montant (DH)</label>
-                                <input type="number" name="incomeAmount" step="0.01" placeholder="0.00" required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                                <input type="text" name="incomeDesc" placeholder="Description (<=35 caractaire)" required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">date</label>
-                                <input type="date" name="incomeDate"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                            </div>
-                            <button type="submit"
-                                class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                Enregistrer
-                            </button>
-                        </form>
-                    </div>
-                </div>
             </section>
 
 
@@ -954,6 +950,8 @@ if (!isset($_SESSION["user_id"])) {
 
                 const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
                 //PHP
+                const incomeData = <?php echo json_encode($incomeData); ?>;
+                const expenseData = <?php echo json_encode($expenseData); ?>;
 
                 // creation de graphique
                 const options = {

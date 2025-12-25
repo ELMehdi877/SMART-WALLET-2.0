@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Finance Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        @keyframes modalEntry {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes backdropFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-animate { animation: modalEntry 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .backdrop-animate { animation: backdropFade 0.3s ease forwards; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-8">
+
+    <!-- Bouton pour ouvrir la modal de rapport -->
+    <div class="max-w-7xl mx-auto">
+        <button onclick="toggleModal('reportModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg transition-all transform hover:scale-105">
+            <i class="fas fa-chart-line mr-2"></i> Voir le Rapport Financier
+        </button>
+    </div>
+
+    <!-- MODAL PRINCIPALE (STATISTIQUES) -->
+    <div id="reportModal" class="fixed inset-0 z-40 hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm backdrop-animate"></div>
+        
+        <!-- Content -->
+        <div class="relative bg-white w-full max-w-5xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden modal-animate flex flex-col">
+            <!-- Header -->
+            <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Analyse du Mois</h2>
+                    <p class="text-slate-500 text-sm">Octobre 2023 - Aperçu général</p>
+                </div>
+                <button onclick="toggleModal('reportModal')" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Body (Scrollable) -->
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <!-- Top Cards Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-emerald-600 font-semibold uppercase text-xs tracking-wider">Total Revenus</span>
+                            <i class="fas fa-arrow-trend-up text-emerald-500"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-emerald-700">+ 12,450.00 €</div>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-rose-600 font-semibold uppercase text-xs tracking-wider">Total Dépenses</span>
+                            <i class="fas fa-arrow-trend-down text-rose-500"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-rose-700">- 4,120.00 €</div>
+                    </div>
+                    <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-indigo-600 font-semibold uppercase text-xs tracking-wider">Balance Net</span>
+                            <i class="fas fa-wallet text-indigo-500"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-indigo-700">8,330.00 €</div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8">
+                    <h3 class="font-bold text-slate-700 mb-4">Flux de trésorerie hebdomadaire</h3>
+                    <div class="h-64">
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-4 mb-8">
+                    <button onclick="openEntryModal('revenu')" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
+                        <i class="fas fa-plus mr-2"></i> Ajouter Revenu
+                    </button>
+                    <button onclick="openEntryModal('depense')" class="flex-1 bg-rose-600 text-white py-3 rounded-xl font-bold hover:bg-rose-700 transition shadow-lg shadow-rose-200">
+                        <i class="fas fa-minus mr-2"></i> Ajouter Dépense
+                    </button>
+                </div>
+
+                <!-- History Sections -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Historique Revenus -->
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+                            <span class="w-2 h-6 bg-emerald-500 rounded-full mr-2"></span> Derniers Revenus
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 bg-white border rounded-xl hover:shadow-md transition">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-slate-700">Salaire Mensuel</div>
+                                        <div class="text-xs text-slate-400">25 Oct 2023</div>
+                                    </div>
+                                </div>
+                                <div class="text-emerald-600 font-bold">+ 3,200€</div>
+                            </div>
+                            <!-- Repeat item -->
+                        </div>
+                    </div>
+
+                    <!-- Historique Dépenses -->
+                    <div>
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center">
+                            <span class="w-2 h-6 bg-rose-500 rounded-full mr-2"></span> Dernières Dépenses
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 bg-white border rounded-xl hover:shadow-md transition">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-rose-100 text-rose-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-slate-700">Courses Amazon</div>
+                                        <div class="text-xs text-slate-400">22 Oct 2023</div>
+                                    </div>
+                                </div>
+                                <div class="text-rose-600 font-bold">- 85.50€</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AJOUT (REVENU/DEPENSE) -->
+    <div id="entryModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+        <div class="relative bg-white w-full max-w-md rounded-2xl shadow-2xl modal-animate p-8">
+            <h2 id="entryTitle" class="text-xl font-bold mb-6">Ajouter une opération</h2>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Libellé</label>
+                    <input type="text" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ex: Loyer, Vente...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Montant (€)</label>
+                    <input type="number" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Catégorie</label>
+                    <select class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option>Alimentation</option>
+                        <option>Loisirs</option>
+                        <option>Travail</option>
+                    </select>
+                </div>
+                
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="toggleModal('entryModal')" class="flex-1 py-3 text-slate-500 font-semibold hover:bg-slate-100 rounded-xl transition">Annuler</button>
+                    <button id="btnSubmitEntry" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des Modals
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.toggle('hidden');
+            if(id === 'reportModal' && !modal.classList.contains('hidden')) {
+                initChart();
+            }
+        }
+
+        function openEntryModal(type) {
+            const title = document.getElementById('entryTitle');
+            const btn = document.getElementById('btnSubmitEntry');
+            
+            if(type === 'revenu') {
+                title.innerText = "Ajouter un Revenu";
+                title.className = "text-xl font-bold mb-6 text-emerald-600";
+                btn.className = "flex-1 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition";
+            } else {
+                title.innerText = "Ajouter une Dépense";
+                title.className = "text-xl font-bold mb-6 text-rose-600";
+                btn.className = "flex-1 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition";
+            }
+            
+            toggleModal('entryModal');
+        }
+
+        // Initialisation du Graphique
+        let chartInstance = null;
+        function initChart() {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                    datasets: [{
+                        label: 'Revenus',
+                        data: [3000, 4500, 3200, 5000],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Dépenses',
+                        data: [2100, 1800, 2400, 1500],
+                        borderColor: '#f43f5e',
+                        backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

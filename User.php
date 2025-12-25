@@ -20,7 +20,7 @@ class User{
     }
 
     //fonction pour inseré les donnés sur database
-    public function register($pdo) : bool {
+    public function register(PDO $pdo) : bool {
         if ($this->getUserByEmail($pdo) === NULL) {
             $sql = "INSERT INTO users(fullname,email,password) VALUES (?,?,?)";
     
@@ -37,7 +37,7 @@ class User{
     }
 
     //fonction pour verifier l'utilisateur existe
-    public function getUserByEmail($pdo) : ?array{
+    public function getUserByEmail(PDO $pdo) : ?array{
         
         $sql = "SELECT id,password FROM users WHERE email = ?";
         $stmt = $pdo->prepare($sql);
@@ -53,7 +53,7 @@ class User{
     
 
     //fonction return les information d'utilisateurs
-    public function getByID($pdo) : array {
+    public function getByID(PDO $pdo) : array {
         $sql = "SELECT id,fullname,email,password
         FROM users u 
         WHERE u.id = ?";
@@ -67,7 +67,13 @@ class User{
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
 
     //fonction de ajouter un objet $category a sont tableau categories
-    public function addCategory(Category $category){
+    public function addCategory(Category $category,string $category_name,PDO $pdo){
+        $sql = "INSERT INTO category(user_id,category_name) VALUES (?,?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $this->id,
+            $category_name
+        ]);
         $this->categories[] = $category;
     }
 

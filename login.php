@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $table = $user->getUserByEmail($pdo);
         if ($table) {
             if (password_verify($connexion_password,$table["password"])) {
-                $_SESSION["id_user"] = $table["password"];
+                $_SESSION["user_id"] = $table["password"];
                 header("Location: dashbord.php");
                 exit();
             }
