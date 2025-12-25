@@ -1,4 +1,6 @@
 <?php
+
+##class uer
 class User{
     // Visibilité (Access Modifiers) && attribute(proprieté)
     private $id;
@@ -45,9 +47,7 @@ class User{
 
 }
 
-
-
-
+#class Category
 class Category{
     // Visibilité (Access Modifiers) && attribute(proprieté)
 
@@ -80,6 +80,7 @@ class Category{
     }
 }
 
+#class Transaction
 class Transaction {
     // Visibilité (Access Modifiers) && attribute(proprieté)
     protected $id;
@@ -101,11 +102,14 @@ class Transaction {
     public function delete($id){}
 }
 
-class Incomes extends Transaction{
+#class Income
+class Income extends Transaction{
     private $income_date;
 
 }
-class Expenses extends Transaction{
+
+#class Expense
+class Expense extends Transaction{
     private $expense_date;
 }
 

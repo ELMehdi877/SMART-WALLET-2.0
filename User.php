@@ -19,22 +19,38 @@ class User{
     }
 
     //fonction pour inseré les donnés sur database
-    public function register($pdo){
-        $sql = "INSERT INTO users(fullname,email,password) VALUES (?,?,?)";
+    public function register($pdo) : bool {
+        if ($this->getExiste($pdo)) {
+            return false;
+        }
+        else {
+            $sql = "INSERT INTO users(fullname,email,password) VALUES (?,?,?)";
 
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute([
-        $this->fullname ,
-        $this->email ,
-        $this->password,
-        ]);
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute([
+            $this->fullname ,
+            $this->email ,
+            $this->password
+            ]);
+            return true ;
+        }
     }
 
     //fonction pour verifier l'utilisateur existe
-    public function login($email,$password){}
+    public function getExiste($pdo) : bool{
+        
+        $sql = "SELECT id,fullname FROM users WHERE email = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt ->execute([
+            $this->email
+        ]);
+        return (bool) $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     //fonction return les information d'utilisateurs
-    public function getByID($id){}
+    public function getByID($id) : arry {
+        
+    }
 
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
 
