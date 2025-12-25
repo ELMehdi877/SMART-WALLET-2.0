@@ -1,6 +1,8 @@
 <?php
 session_start();
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    ####### sign_up #######
     if (isset($_POST["inscrire_button"]) && isset($_POST["inscrire_fullname"]) && isset($_POST["inscrire_email"]) && isset($_POST["inscrire_password"])) {
         require "connection.php";
         require "User.php";
@@ -22,6 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit();
         }
     }
+
+    ####### login #######
     elseif (isset($_POST["connexion_button"]) && isset($_POST["connexion_email"]) && isset($_POST["connexion_password"])) {
         require "connection.php";
         require "User.php";

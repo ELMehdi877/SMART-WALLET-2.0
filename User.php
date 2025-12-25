@@ -37,19 +37,21 @@ class User{
     }
 
     //fonction pour verifier l'utilisateur existe
-    public function getExiste($pdo) : bool{
+    public function getExiste($pdo) : ?int{
         
-        $sql = "SELECT id,fullname FROM users WHERE email = ?";
+        $sql = "SELECT id FROM users WHERE email = ?";
         $stmt = $pdo->prepare($sql);
         $stmt ->execute([
             $this->email
         ]);
-        return (bool) $stmt->fetch(PDO::FETCH_ASSOC);
+        $existe = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id = $existe["id"] ?? NULL;
+        return $id;
     }
 
     //fonction return les information d'utilisateurs
-    public function getByID($id) : arry {
-        
+    public function getByID($pdo) : arry {
+        $sql = "SELECT id FROM users";
     }
 
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
