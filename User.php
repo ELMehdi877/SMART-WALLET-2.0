@@ -1,4 +1,9 @@
 <?php
+require "connection.php";
+require "Category.php";
+require "Income.php";
+require "Expense.php";
+
 class User{
     // Visibilité (Access Modifiers) && attribute(proprieté)
     private $id;
@@ -67,14 +72,22 @@ class User{
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
 
     //fonction de ajouter un objet $category a sont tableau categories
-    public function addCategory(Category $category,string $category_name,PDO $pdo){
-        $sql = "INSERT INTO category(user_id,category_name) VALUES (?,?)";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            $this->id,
-            $category_name
-        ]);
-        $this->categories[] = $category;
+    public function addCategory(string $category_name,PDO $pdo) : bool{
+        $category = new Category($category_name);
+        if($category->getID($category_name,$pdo)){
+            return true;
+        }
+        else {
+            $sql = "INSERT INTO category(user_id,category_name) VALUES (?,?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $this->id,
+                $category_name
+            ]);
+            $category = new Category($category_name);
+            $this->categories[] = $category;
+            return false;
+        }
     }
 
 }

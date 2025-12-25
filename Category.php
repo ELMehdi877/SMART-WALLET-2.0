@@ -1,4 +1,5 @@
 <?php 
+
 class Category{
     // Visibilité (Access Modifiers) && attribute(proprieté)
 
@@ -6,6 +7,26 @@ class Category{
     private $category_name;
     private $created_at;
 
+    // ajouter
+    public function __construct($category_name){
+        $this->category_name = $category_name;
+    }
+
+    function setID($id){
+        $this->id = $id;
+    }
+    function getID(string $category_name,PDO $pdo) : ?array{
+        $sql = "SELECT * FROM category WHERE category_name = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $category_name
+        ]);
+        $category_existe = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($category_existe === false) {
+            return NULL;
+        }
+        return $category_existe;
+    }
     ### composition de category avec (income ,expense)
     
     //tableau contient tous les incomes pour category
@@ -14,7 +35,7 @@ class Category{
     //tableau contient tous les expenses pour category
     private $expenses = [];
     
-    //conction 
+    //conection 
     public function create($name){}
     public function getAll($id){}
 
@@ -22,7 +43,6 @@ class Category{
     
     //fonction d'ajouter un objet $income a son tableau incomes
     public function addIncome(Incomes $income){
-        $
         $this->incomes[] = $income;
     }
 
@@ -31,3 +51,4 @@ class Category{
         $this->expenses[] = $expense;
     }
 }
+

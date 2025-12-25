@@ -4,7 +4,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     ####### login #######
     if (isset($_POST["connexion_button"]) && isset($_POST["connexion_email"]) && isset($_POST["connexion_password"])) {
-        require "connection.php";
         require "User.php";
         $connexion_email = trim($_POST["connexion_email"]);
         $connexion_password = trim($_POST["connexion_password"]);
@@ -14,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $table = $user->getUserByEmail($pdo);
         if ($table) {
             if (password_verify($connexion_password,$table["password"])) {
-                $_SESSION["user_id"] = $table["password"];
+                $_SESSION["user_id"] = $table["id"];
                 header("Location: dashbord.php");
                 exit();
             }

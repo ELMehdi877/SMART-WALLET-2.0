@@ -31,7 +31,6 @@ CREATE TABLE if not exists incomes(
     description VARCHAR(35) not null,
     income_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-
 );
 
 DROP TABLE IF EXISTS expenses;

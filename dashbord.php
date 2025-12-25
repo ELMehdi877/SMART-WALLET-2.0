@@ -106,8 +106,12 @@ if (!isset($_SESSION["user_id"])) {
                                     class="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">Payments</a>
                                 <a href="#"
                                     class="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">Exchange</a>
-                                <a href="#"
-                                    class="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">Support</a>
+                                <form action="logout.php" method="POST">
+                                    <button type="submit" name="logout"
+                                    class="text-gray-600 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition">
+                                    Déconnexion
+                                </button>
+                                </form>
                             </div>
                         </div>
 
@@ -252,6 +256,12 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                     </div>
+                    <?php
+                    if (isset($_SESSION["message"])) {
+                        echo $_SESSION["message"];
+                        unset($_SESSION["message"]);
+                    }
+                    ?>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
@@ -810,43 +820,21 @@ if (!isset($_SESSION["user_id"])) {
                     <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-10 animate-slide-up">
                         <div class="flex justify-between items-center mb-8">
                             <div class="flex items-center gap-3">
-                                <span class="text-3xl">💵</span>
-                                <h3 class="text-2xl font-bold text-gray-800">Ajouter un Revenu</h3>
+                                <h3 class="text-2xl font-bold text-gray-800">Ajouter une Category</h3>
                             </div>
                             <button onclick="closeModal('categoryModal')"
                                 class="text-gray-400 hover:text-red-600 text-3xl transition-colors">
                                 &times;
                             </button>
                         </div>
-                        <form action="database.php" method="POST" class="space-y-6">
-                    
+                        <form action="add_category.php" method="POST" class="space-y-6">
+                
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
-                                <select name="incomeCategory"  required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                                    <option value="" disabled selected>Choisir une catégorie</option>
-                                    <option value="Salaire">Salaire</option>
-                                    <option value="Prime">Prime</option>
-                                    <option value="Bonus">Bonus</option>
-                                    <option value="Revenus freelancing">Revenus freelancing</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Montant (DH)</label>
-                                <input type="number" name="incomeAmount" step="0.01" placeholder="0.00" required
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du categorie</label>
+                                <input type="text" name="category_name" placeholder="Ex: Fast Food"
                                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
-                                <input type="text" name="incomeDesc" placeholder="Description (<=35 caractaire)" required
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">date</label>
-                                <input type="date" name="incomeDate"
-                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
-                            </div>
-                            <button type="submit"
+                            <button type="submit" name="add_category"
                                 class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                                 Enregistrer
                             </button>
