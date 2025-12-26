@@ -1,10 +1,14 @@
-<?php 
-session_start();
-if (!isset($_SESSION["user_id"])) {
-    header("Location: index.php");
-    exit;
-}
-
+<?php
+    session_start();
+    if (! isset($_SESSION["user_id"])) {
+        header("Location: index.php");
+        exit;
+    }
+    $user_id = $_SESSION["user_id"];
+    require "connection.php";
+    require "Income.php";
+    require "Expense.php";
+    // require "Transaction.php";
 
 ?>
 <!DOCTYPE html>
@@ -170,9 +174,9 @@ if (!isset($_SESSION["user_id"])) {
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Revenus</p>
-                                 
+
                                 <p id='totalIncome' class='text-3xl font-bold text-green-500'> 15 MAD</p>";
-                                
+
                             </div>
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-green-100 to-emerald-200 rounded-full flex items-center justify-center">
@@ -217,7 +221,7 @@ if (!isset($_SESSION["user_id"])) {
                                     d='M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' />
                                 </svg>
                             </div>
-                                    
+
                         </div>
                     </div>
                 </div>
@@ -232,9 +236,9 @@ if (!isset($_SESSION["user_id"])) {
                             <button onclick="openModal('categoryModal')"
                                 class="ml-30 lg:ml-85 px-4 py-2 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500"
                                  type="button">Ajouter un Category
-                                
+
                             </button>
-                            
+
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center ">
                             <div class="flex items-center w-full gap-2">
@@ -246,10 +250,10 @@ if (!isset($_SESSION["user_id"])) {
                                     <option value="Prime">Prime</option>
                                     <option value="Bonus">Bonus</option>
                                     <option value="Revenus freelancing">Revenus freelancing</option>
-                                </select>    
+                                </select>
                                 <input type="date" id="incomeDate_filtre" class="flex-1 min-w-[120px] text-xs sm:text-sm font-semibold py-2 px-2 sm:px-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
                             </div>
-                            
+
                             <button onclick="openModal('incomeModal')"
                             class="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
                                 +Ajouter
@@ -257,10 +261,10 @@ if (!isset($_SESSION["user_id"])) {
                         </div>
                     </div>
                     <?php
-                    if (isset($_SESSION["message"])) {
-                        echo $_SESSION["message"];
-                        unset($_SESSION["message"]);
-                    }
+                        if (isset($_SESSION["incomeAmount"])) {
+                            echo $_SESSION["incomeAmount"];
+                            unset($_SESSION["incomeAmount"]);
+                        }
                     ?>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -281,43 +285,52 @@ if (!isset($_SESSION["user_id"])) {
                                 </tr>
                             </thead>
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
-                                
-                               
-                                        <tr>
-                                            <td colspan='5' class='px-4 py-16 text-center'>
-                                                <div class='text-6xl mb-4 opacity-50'>💰</div>
-                                                <p class='text-gray-400'>Aucun revenu enregistré</p>
-                                            </td>
-                                        </tr>
-                                 
-                            
-                                        <tr class='hover:bg-gray-50 transition-colors'>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['categorie']}</td>
-                                            <td class='w-[20%] px-4 py-4'>
-                                                <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-800'>
-                                                    {$income['montants']} DH
-                                                </span>
-                                            </td>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
-                                            <td class='w-[20%] px-4 py-4'>
-                                            <form action='database.php' method='POST'>
-                                                <button type='button' data-id='{$income['id']}' data-categorie='{$income['categorie']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}' 
-                                                class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
-                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
-                                                    </svg>
-                                                </button>
-                                                <button type='submit' name='incomeDelete' value={$income['id']} class='text-red-600 hover:text-red-800 transition-colors'>
-                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
-                                                    </svg>
-                                                </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                  
-                                
+
+                               <?php
+                                   $income         = new Income($user_id, "", "", "");
+                                   $tables_incomes = $income->getByID("incomes", $pdo);
+                                   if (empty($tables_incomes)) {
+                                       echo "
+                                       <tr>
+                                           <td colspan='5' class='px-4 py-16 text-center'>
+                                               <div class='text-6xl mb-4 opacity-50'>💰</div>
+                                               <p class='text-gray-400'>Aucun revenu enregistré</p>
+                                           </td>
+                                       </tr>
+                                   ";
+                                   } else {
+                                       foreach ($tables_incomes as $income) {
+                                           echo "
+                                            <tr class='hover:bg-gray-50 transition-colors'>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['category_name']}</td>
+                                                <td class='w-[20%] px-4 py-4'>
+                                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-800'>
+                                                        {$income['montants']} DH
+                                                    </span>
+                                                </td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['income_date']}</td>
+                                                <td class='w-[20%] px-4 py-4'>
+                                                <form action='database.php' method='POST'>
+                                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['income_date']}'
+                                                    class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                        </svg>
+                                                    </button>
+                                                    <button type='submit' name='incomeDelete' value={$income['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                        </svg>
+                                                    </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        ";
+                                       }
+                                   }
+                               ?>
+
                             </tbody>
                         </table>
                     </div>
@@ -332,7 +345,7 @@ if (!isset($_SESSION["user_id"])) {
                             <form action="database.php" method="GET" class="ml-30 lg:ml-98">
                                 <input name="expenses_pdf"
                                 class="px-4 py-2 bg-yellow-400 text-white rounded-lg shadow hover:bg-yellow-500"
-                                value="Export PDF" type="submit" 
+                                value="Export PDF" type="submit"
                                 >
                             </form>
                         </div>
@@ -411,8 +424,8 @@ if (!isset($_SESSION["user_id"])) {
                                         <option value="Remboursement prêt">Remboursement prêt</option>
                                         <option value="Intérêts bancaires">Intérêts bancaires</option>
                                     </optgroup>
-                                </select>   
-                                <input type="date" id="expenseDate_filtre" class="flex-1 min-w-[120px] text-xs sm:text-sm font-semibold py-2 px-2 sm:px-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">                    
+                                </select>
+                                <input type="date" id="expenseDate_filtre" class="flex-1 min-w-[120px] text-xs sm:text-sm font-semibold py-2 px-2 sm:px-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
                             </div>
                             <button onclick="openModal('expenseModal')"
                                 class="w-full sm:w-auto bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
@@ -421,6 +434,12 @@ if (!isset($_SESSION["user_id"])) {
                         </div>
                     </div>
 
+                    <?php
+                        if (isset($_SESSION["expenseAmount"])) {
+                            echo $_SESSION["expenseAmount"];
+                            unset($_SESSION["expenseAmount"]);
+                        }
+                    ?>
                     <div class="overflow-x-auto">
                         <table class="w-full ">
                             <thead>
@@ -440,38 +459,50 @@ if (!isset($_SESSION["user_id"])) {
                                 </tr>
                             </thead>
                             <tbody id="expensesBody" class="divide-y divide-gray-200">
-                               <tr>
-                                    <td colspan='5' class='px-4 py-16 text-center'>
-                                        <div class='text-6xl mb-4 opacity-50'>🛒</div>
-                                        <p class='text-gray-400'>Aucune dépense enregistrée</p>
-                                    </td>
-                                </tr>
-                                        <tr class='hover:bg-gray-50 transition-colors'>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['categorie']}</td>
-                                            <td class='w-[20%] px-4 py-4'>
-                                                <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800'>
-                                                    {$expense['montants']} DH
-                                                </span>
-                                            </td>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
-                                            <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
-                                            <td class='w-[20%] px-4 py-4'>
-                                            <form action='database.php' method='POST'>
-                                                <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['categorie']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
-                                                class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
-                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
-                                                    </svg>
-                                                </button>
-                                                <button type='submit' name='expenseDelete' value={$expense['id']} class='text-red-600 hover:text-red-800 transition-colors'>
-                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
-                                                    </svg>
-                                                </button>
-                                                </form>
+                            <?php
+                                $expense = new Expense($user_id, "", "", "");
+                                $tables_expenses = $expense->getByID("expenses", $pdo);
+                                if (empty($tables_expenses)) {
+                                    echo "
+                                        <tr>
+                                            <td colspan='5' class='px-4 py-16 text-center'>
+                                                <div class='text-6xl mb-4 opacity-50'>🛒</div>
+                                                <p class='text-gray-400'>Aucune dépense enregistrée</p>
                                             </td>
                                         </tr>
-                                    
+                                    ";
+                                } else {
+                                    foreach ($tables_expenses as $expense) {
+                                        echo "
+                                             <tr class='hover:bg-gray-50 transition-colors'>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['category_name']}</td>
+                                                <td class='w-[20%] px-4 py-4'>
+                                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800'>
+                                                        {$expense['montants']} DH
+                                                    </span>
+                                                </td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['expense_date']}</td>
+                                                <td class='w-[20%] px-4 py-4'>
+                                                <form action='database.php' method='POST'>
+                                                    <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['expense_date']}'
+                                                    class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                        </svg>
+                                                    </button>
+                                                    <button type='submit' name='expenseDelete' value={$expense['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                        </svg>
+                                                    </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        ";
+                                    }
+                                }
+                            ?>
                             </tbody>
                         </table>
                     </div>
@@ -492,7 +523,7 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                         <form action="add_income.php" method="POST" class="space-y-6">
-                    
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
                                 <select name="incomeCategory"  required
@@ -542,7 +573,7 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                         <form action="database.php" method="POST" class="space-y-6">
-                    
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
                                 <select id="incomeUpdateCategorie" name="incomeUpdateCategory"  required
@@ -570,7 +601,7 @@ if (!isset($_SESSION["user_id"])) {
                                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
                             </div>
                             <input id="incomeUpdateid" type="hidden" name="incomeUpdateid">
-                            <button  type="submit" 
+                            <button  type="submit"
                                 class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                                 Modifie
                             </button>
@@ -593,7 +624,7 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                         <form action="add_expense.php" method="POST" class="space-y-6">
-                            
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
                                 <select name="expenseCategory" required
@@ -710,7 +741,7 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                         <form action="database.php" method="POST" class="space-y-6">
-                            
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
                                 <select id="expenseUpdateCategorie" name="expenseUpdateCategory" required
@@ -812,8 +843,8 @@ if (!isset($_SESSION["user_id"])) {
                         </form>
                     </div>
                 </div>
-                
-                
+
+
                  <!-- Modal insert Category -->
                 <div id="categoryModal"
                     class="hidden flex items-center justify-center px-4 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-y-auto">
@@ -828,7 +859,7 @@ if (!isset($_SESSION["user_id"])) {
                             </button>
                         </div>
                         <form action="add_category.php" method="POST" class="space-y-6">
-                
+
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nom du categorie</label>
                                 <input type="text" name="category_name" placeholder="Ex: Fast Food"
@@ -904,7 +935,7 @@ if (!isset($_SESSION["user_id"])) {
             function closeModal(modalId) {
                 document.getElementById(modalId).classList.add('hidden');
             }
-        
+
             //Affiche modale de modification incomes
             function modifie_incomes(){
                 let incomeModifie = document.querySelectorAll('.incomeModifie');
@@ -918,8 +949,8 @@ if (!isset($_SESSION["user_id"])) {
                         document.getElementById('incomeUpdateDate').value = btn.dataset.date;
                         openModal('incomeModalModifie');
                     })
-                }); 
-            } ;      
+                });
+            } ;
             modifie_incomes();
             //Affiche modale de modification expenses
             function modifie_expenses(){
@@ -954,7 +985,7 @@ if (!isset($_SESSION["user_id"])) {
                         { name: "Revenus", data: incomeData },
                         { name: "Dépenses", data: expenseData }
                     ],
-                    xaxis: { 
+                    xaxis: {
                         categories: months,
                         labels: {
                             style: {
@@ -970,22 +1001,22 @@ if (!isset($_SESSION["user_id"])) {
                             }
                         }
                     },
-                    plotOptions: { 
-                        bar: { 
-                            borderRadius: 8, 
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 8,
                             columnWidth: "45%",
                             dataLabels: {
                                 position: 'top'
                             }
-                        } 
+                        }
                     },
-                    dataLabels: { 
-                        enabled: false 
+                    dataLabels: {
+                        enabled: false
                     },
                     colors: ["#10B981", "#EF4444"],
-                    legend: { 
-                        position: "top", 
-                        fontSize: "14px", 
+                    legend: {
+                        position: "top",
+                        fontSize: "14px",
                         fontWeight: 600,
                         markers: {
                             width: 12,
@@ -993,7 +1024,7 @@ if (!isset($_SESSION["user_id"])) {
                             radius: 6
                         }
                     },
-                    grid: { 
+                    grid: {
                         borderColor: "rgba(0,0,0,0.05)",
                         strokeDashArray: 4
                     },
@@ -1036,8 +1067,8 @@ if (!isset($_SESSION["user_id"])) {
                             `;
                         }
                         else {
-                        
-                        
+
+
                             data.forEach(row => {
                                 txt += `
                                 <tr class='hover:bg-gray-50 transition-colors'>
@@ -1079,7 +1110,7 @@ if (!isset($_SESSION["user_id"])) {
                         modifie_incomes();
                     });
                 });
-    
+
             //filtrage incomes par date
             document.getElementById("incomeDate_filtre").addEventListener('change' , function(e) {
                 e.preventDefault();
@@ -1102,8 +1133,8 @@ if (!isset($_SESSION["user_id"])) {
                             `;
                         }
                         else {
-                        
-                        
+
+
                             data.forEach(row => {
                                 txt += `
                                 <tr class='hover:bg-gray-50 transition-colors'>
@@ -1145,8 +1176,8 @@ if (!isset($_SESSION["user_id"])) {
                         modifie_incomes();
                     });
                 });
-    
-        
+
+
 
 
             //filtrage expenses categorie
@@ -1171,8 +1202,8 @@ if (!isset($_SESSION["user_id"])) {
                             `;
                         }
                         else {
-                        
-                        
+
+
                             data.forEach(row => {
                                 txt += `
                                     <tr class='hover:bg-gray-50 transition-colors'>
@@ -1186,21 +1217,21 @@ if (!isset($_SESSION["user_id"])) {
                                         <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>${row.date}</td>
                                         <td class='w-[20%] px-4 py-4'>
                                             <form action='database.php' method='POST'>
-                                                <button type='button' 
-                                                    data-id='${row.id}' 
-                                                    data-categorie='${row.categorie}' 
-                                                    data-montants='${row.montants}' 
-                                                    data-description='${row.description}' 
+                                                <button type='button'
+                                                    data-id='${row.id}'
+                                                    data-categorie='${row.categorie}'
+                                                    data-montants='${row.montants}'
+                                                    data-description='${row.description}'
                                                     data-date='${row.date}'
                                                     class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                                     <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' 
+                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2'
                                                             d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
                                                     </svg>
                                                 </button>
                                                 <button type='submit' name='expenseDelete' value='${row.id}' class='text-red-600 hover:text-red-800 transition-colors'>
                                                     <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' 
+                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2'
                                                             d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
                                                     </svg>
                                                 </button>
@@ -1238,8 +1269,8 @@ if (!isset($_SESSION["user_id"])) {
                             `;
                         }
                         else {
-                        
-                        
+
+
                             data.forEach(row => {
                                 txt += `
                                     <tr class='hover:bg-gray-50 transition-colors'>
@@ -1253,21 +1284,21 @@ if (!isset($_SESSION["user_id"])) {
                                         <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>${row.date}</td>
                                         <td class='w-[20%] px-4 py-4'>
                                             <form action='database.php' method='POST'>
-                                                <button type='button' 
-                                                    data-id='${row.id}' 
-                                                    data-categorie='${row.categorie}' 
-                                                    data-montants='${row.montants}' 
-                                                    data-description='${row.description}' 
+                                                <button type='button'
+                                                    data-id='${row.id}'
+                                                    data-categorie='${row.categorie}'
+                                                    data-montants='${row.montants}'
+                                                    data-description='${row.description}'
                                                     data-date='${row.date}'
                                                     class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                                     <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' 
+                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2'
                                                             d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
                                                     </svg>
                                                 </button>
                                                 <button type='submit' name='expenseDelete' value='${row.id}' class='text-red-600 hover:text-red-800 transition-colors'>
                                                     <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' 
+                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2'
                                                             d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
                                                     </svg>
                                                 </button>

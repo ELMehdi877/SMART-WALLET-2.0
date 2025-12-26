@@ -9,8 +9,13 @@ if (!isset($_SESSION["user_id"])) {
 $user_id = $_SESSION["user_id"];
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_expense"])) {
     if (isset($_POST["expenseCategory"]) && isset($_POST["expenseAmount"]) && isset($_POST["expenseDesc"]) && isset($_POST["expenseDate"])) {
-        $user = new User($user_id,'','','');
-        $user->addExpense($_POST["expenseCategory"],$_POST["expenseAmount"],$_POST["expenseDesc"],$_POST["expenseDate"],$pdo);
+        if ($_POST["expenseAmount"] <= 0) {
+            $_SESSION["expenseAmount"] = "le montants que vous avez insairé ".$_POST["expenseAmount"]." et incorrect";
+        }
+        else {
+            $user = new User($user_id,'','','');
+            $user->addExpense($_POST["expenseCategory"],$_POST["expenseAmount"],$_POST["expenseDesc"],$_POST["expenseDate"],$pdo);
+        }
     }
     header("Location: dashbord.php");
     exit();

@@ -9,8 +9,14 @@ if (!isset($_SESSION["user_id"])) {
 $user_id = $_SESSION["user_id"];
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_income"])) {
     if (isset($_POST["incomeCategory"]) && isset($_POST["incomeAmount"]) && isset($_POST["incomeDesc"]) && isset($_POST["incomeDate"])) {
-        $user = new User($user_id,'','','');
-        $user->addIncome($_POST["incomeCategory"],$_POST["incomeAmount"],$_POST["incomeDesc"],$_POST["incomeDate"],$pdo);
+        if ($_POST["incomeAmount"] <= 0) {
+            $_SESSION["incomeAmount"] = "le montants que vous avez insairé ".$_POST["incomeAmount"]." et incorrect";
+        }
+        else {
+            $_SESSION["income_info"][]=[$user_id,$_POST["incomeCategory"],$_POST["incomeAmount"],$_POST["incomeDesc"]];
+            $user = new User($user_id,'','','');
+            $user->addIncome($_POST["incomeCategory"],$_POST["incomeAmount"],$_POST["incomeDesc"],$_POST["incomeDate"],$pdo);
+       }
     }
     header("Location: dashbord.php");
     exit();
