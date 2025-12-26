@@ -14,7 +14,6 @@ class Transaction {
         $this->amount = $amoun;
         $this->description = $desc;
     }
-    public function creatte(){}
     public function getByID($id){}
     public function getByCategory($category_id){}
     public function update($id){}

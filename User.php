@@ -72,23 +72,25 @@ class User{
     #### methode composition pour ajouter l'objet $category à la fin de sont tableau
 
     //fonction de ajouter un objet $category a sont tableau categories
-    public function addCategory(string $category_name,PDO $pdo) : bool{
-        $category = new Category($category_name);
-        if($category->getID($category_name,$pdo)){
-            return true;
-        }
-        else {
-            $sql = "INSERT INTO category(user_id,category_name) VALUES (?,?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $this->id,
-                $category_name
-            ]);
-            $category = new Category($category_name);
-            $this->categories[] = $category;
-            return false;
-        }
-    }
+    // public function addCategory(string $category_name,PDO $pdo) : bool{
+    //     $category = new Category($category_name);
+    //     if($category->getID($category_name,$pdo)){
+    //         return true;
+    //     }
+    //     else {
+    //         $sql = "INSERT INTO category(user_id,category_name) VALUES (?,?)";
+    //         $stmt = $pdo->prepare($sql);
+    //         $stmt->execute([
+    //             $this->id,
+    //             $category_name
+    //         ]);
+    //         $category = new Category($category_name);
+    //         $this->categories[] = $category;
+    //         return false;
+    //     }
+    // }
+
+    ### income
     public function addIncome(string $category_name,float $montants,string $description,string $income_date,PDO $pdo){
         
             $sql = "INSERT INTO incomes(user_id,category_name,montants,description,income_date) VALUES (?,?,?,?,?)";
@@ -102,5 +104,21 @@ class User{
             ]);
             $income = new Income($category_name,$montants,$description,$income_date);
             $this->incomes[] = $income;
+    }
+
+     ### expense
+    public function addExpense(string $category_name,float $montants,string $description,string $expense_date,PDO $pdo){
+        
+            $sql = "INSERT INTO expenses(user_id,category_name,montants,description,expense_date) VALUES (?,?,?,?,?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $this->id,
+                $category_name,
+                $montants,
+                $description,
+                $expense_date
+            ]);
+            $expense = new Expense($category_name,$montants,$description,$expense_date);
+            $this->expenses[] = $expense;
     }
 }
