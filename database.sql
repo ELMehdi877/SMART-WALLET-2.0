@@ -28,7 +28,7 @@ CREATE TABLE if not exists incomes(
     category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
-    income_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE if not exists expenses(
     category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
-    expense_date  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date  DATETIME DEFAULT CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -63,7 +63,7 @@ DELETE FROM users WHERE fullname = "amine";
 ALTER TABLE users DROP COLUMN fullname;
 ALTER TABLE users ADD COLUMN sports VARCHAR(30) NOT NULL;
 ALTER TABLE users MODIFY COLUMN sports TEXT NOT NULL;
-ALTER TABLE users CHANGE COLUMN sports fullname VARCHAR(30) NOT NULL;
+ALTER TABLE incomes CHANGE COLUMN income_date date  DATETIME DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE users MODIFY COLUMN fullname VARCHAR(30) NOT NULL;
 DELETE FROM users;
 ALTER TABLE users AUTO_INCREMENT = 1;

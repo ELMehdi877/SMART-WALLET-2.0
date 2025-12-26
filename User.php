@@ -93,7 +93,7 @@ class User{
     ### income
     public function addIncome(string $category_name,float $montants,string $description,string $income_date,PDO $pdo){
         
-            $sql = "INSERT INTO incomes(user_id,category_name,montants,description,income_date) VALUES (?,?,?,?,?)";
+            $sql = "INSERT INTO incomes(user_id,category_name,montants,description,date) VALUES (?,?,?,?,?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $this->id,
@@ -102,14 +102,14 @@ class User{
                 $description,
                 $income_date
             ]);
-            $income = new Income($category_name,$montants,$description,$income_date);
+            $income = new Income($this->id,"",$category_name,$montants,$description,$income_date);
             $this->incomes[] = $income;
     }
 
      ### expense
     public function addExpense(string $category_name,float $montants,string $description,string $expense_date,PDO $pdo){
         
-            $sql = "INSERT INTO expenses(user_id,category_name,montants,description,expense_date) VALUES (?,?,?,?,?)";
+            $sql = "INSERT INTO expenses(user_id,category_name,montants,description,date) VALUES (?,?,?,?,?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $this->id,
@@ -118,7 +118,7 @@ class User{
                 $description,
                 $expense_date
             ]);
-            $expense = new Expense($category_name,$montants,$description,$expense_date);
+            $expense = new Expense($this->id,"",$category_name,$montants,$description,$expense_date);
             $this->expenses[] = $expense;
     }
 }

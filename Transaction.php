@@ -3,13 +3,16 @@
 #class Transaction
 class Transaction {
     // Visibilité (Access Modifiers) && attribute(proprieté)
+    protected $id;
     protected $user_id;
     protected $category_name;
     protected $amount;
     protected $description; 
+    protected $date; 
     
     #methode magic
-    public function __construct($user_id,$category_name,$amount,$descriotion){
+    public function __construct($id,$user_id,$category_name,$amount,$descriotion){
+        $this->id = $id;
         $this->user_id = $user_id;
         $this->category_name = $category_name;
         $this->amount = $amount;
@@ -29,6 +32,8 @@ class Transaction {
         // }
         return $income;
     }
+
+    //insertion income ou expense
     public function getByCategory($table,$user_id){
         $sql = "SELECT * FROM $table WHERE user_id = ? AND category_name = ?";
         $stmt = $pdo->prepare($sql);
@@ -38,8 +43,16 @@ class Transaction {
             $this->category_name,
         ]);
     }
-    public function update($id){
-
+    public function update(string $table,PDO $pdo){
+        $sql = "UPDATE $table SET category_name = ?, montants = ?, description = ?, date = ? WHERE user_id = ? AND id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $this->category_name,
+            $this->amount,
+            $this->description,
+            $this->user_id ,
+            $this->id,
+    ]);
     }
     public function delete($id){}
 }

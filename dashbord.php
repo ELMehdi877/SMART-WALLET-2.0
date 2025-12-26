@@ -287,7 +287,7 @@
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
 
                                <?php
-                                   $income         = new Income($user_id, "", "", "");
+                                   $income = new Income("",$user_id, "", "", "");
                                    $tables_incomes = $income->getByID("incomes", $pdo);
                                    if (empty($tables_incomes)) {
                                        echo "
@@ -309,10 +309,10 @@
                                                     </span>
                                                 </td>
                                                 <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
-                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['income_date']}</td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
                                                 <td class='w-[20%] px-4 py-4'>
                                                 <form action='database.php' method='POST'>
-                                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['income_date']}'
+                                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}'
                                                     class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                                         <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                                             <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
@@ -460,7 +460,7 @@
                             </thead>
                             <tbody id="expensesBody" class="divide-y divide-gray-200">
                             <?php
-                                $expense = new Expense($user_id, "", "", "");
+                                $expense = new Expense("",$user_id, "", "", "","");
                                 $tables_expenses = $expense->getByID("expenses", $pdo);
                                 if (empty($tables_expenses)) {
                                     echo "
@@ -482,10 +482,10 @@
                                                     </span>
                                                 </td>
                                                 <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
-                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['expense_date']}</td>
+                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
                                                 <td class='w-[20%] px-4 py-4'>
                                                 <form action='database.php' method='POST'>
-                                                    <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['expense_date']}'
+                                                    <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
                                                     class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                                         <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                                                             <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
@@ -572,7 +572,7 @@
                                 &times;
                             </button>
                         </div>
-                        <form action="database.php" method="POST" class="space-y-6">
+                        <form action="update_income.php" method="POST" class="space-y-6">
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
@@ -597,11 +597,11 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">date</label>
-                                <input id="incomeUpdateDate" type="date" name="incomeUpdateDate"
+                                <input id="incomeUpdateDate" type="date" name="incomeUpDate"
                                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
                             </div>
                             <input id="incomeUpdateid" type="hidden" name="incomeUpdateid">
-                            <button  type="submit"
+                            <button  type="submit" name="update_income"
                                 class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                                 Modifie
                             </button>
