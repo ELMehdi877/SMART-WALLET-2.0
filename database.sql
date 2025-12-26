@@ -11,13 +11,13 @@ CREATE TABLE users (
 );
 
 #creation de tableau category
-CREATE TABLE IF NOT EXISTS category(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    CONSTRAINT fr_category_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    category_name VARCHAR(20) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+-- CREATE TABLE IF NOT EXISTS category(
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     user_id INT,
+--     CONSTRAINT fr_category_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+--     category_name VARCHAR(20) NOT NULL,
+--     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+-- );
 
 #creation de tableau incomes
 DROP TABLE IF EXISTS incomes;
@@ -25,8 +25,7 @@ CREATE TABLE if not exists incomes(
     id int AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     CONSTRAINT fk_incomes_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    category_id INT,
-    CONSTRAINT fk_incomes_category FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE,
+    category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
     income_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -38,8 +37,7 @@ CREATE TABLE if not exists expenses(
     id int AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    category_id INT,
-    CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE,
+    category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
     income_date DATETIME DEFAULT CURRENT_TIMESTAMP,

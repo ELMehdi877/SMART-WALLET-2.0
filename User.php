@@ -1,6 +1,5 @@
 <?php
 require "connection.php";
-require "Category.php";
 require "Income.php";
 require "Expense.php";
 
@@ -14,7 +13,8 @@ class User{
     ### composition de user avec category
 
     //tableau contient tous les categories de l'utilisateur
-    private $categories = [];
+    private $incomes = [];
+    private $expenses = [];
 
     //fonction pour remplie les proprieté
     public function __construct($id,$full_name,$em_ail,$pass_word){
@@ -89,5 +89,18 @@ class User{
             return false;
         }
     }
-
+    public function addIncome(string $category_name,float $montants,string $description,string $income_date,PDO $pdo){
+        
+            $sql = "INSERT INTO incomes(user_id,category_name,montants,description,income_date) VALUES (?,?,?,?,?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                $this->id,
+                $category_name,
+                $montants,
+                $description,
+                $income_date
+            ]);
+            $income = new Income($category_name,$montants,$description,$income_date);
+            $this->incomes[] = $income;
+    }
 }

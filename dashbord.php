@@ -491,7 +491,7 @@ if (!isset($_SESSION["user_id"])) {
                                 &times;
                             </button>
                         </div>
-                        <form action="database.php" method="POST" class="space-y-6">
+                        <form action="add_income.php" method="POST" class="space-y-6">
                     
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Categorie</label>
@@ -516,10 +516,10 @@ if (!isset($_SESSION["user_id"])) {
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">date</label>
-                                <input type="date" name="incomeDate"
+                                <input type="date" required name="incomeDate"
                                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 transition-all outline-none">
                             </div>
-                            <button type="submit"
+                            <button type="submit" name="add_income"
                                 class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                                 Enregistrer
                             </button>

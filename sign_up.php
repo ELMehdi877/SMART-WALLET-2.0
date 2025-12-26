@@ -4,7 +4,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     ####### sign_up #######
     if (isset($_POST["inscrire_button"]) && isset($_POST["inscrire_fullname"]) && isset($_POST["inscrire_email"]) && isset($_POST["inscrire_password"])) {
-        require "connection.php";
         require "User.php";
         $fullname = trim($_POST["inscrire_fullname"]);
         $inscrire_fullname = trim($_POST["inscrire_fullname"]);
