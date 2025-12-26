@@ -44,6 +44,7 @@ class Transaction {
             $this->category_name,
         ]);
     }
+
     public function update(string $table,PDO $pdo){
         $sql = "UPDATE $table SET category_name = ?, montants = ?, description = ?, date = ? WHERE user_id = ? AND id = ?";
         $stmt = $pdo->prepare($sql);
@@ -56,5 +57,27 @@ class Transaction {
             $this->id,
     ]);
     }
-    public function delete($id){}
+
+    public function delete(string $table,PDO $pdo){
+        $sql = "DELETE FROM $table  WHERE id = ? AND user_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $this->id,
+            $this->user_id ,
+        ]);
+    }
+
+    public function somme(string $table,PDO $pdo) : ?float{
+        $sql = "SELECT SUM(montants) as total FROM $table WHERE user_id = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $this->user_id ,
+        ]);
+        $total = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($total === false) {
+            return NULL;
+        }
+        return $total["total"];
+    }
+
 }

@@ -175,7 +175,17 @@
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Revenus</p>
 
-                                <p id='totalIncome' class='text-3xl font-bold text-green-500'> 15 MAD</p>";
+                                 <?php
+                                    $total_income = new Income("",$user_id,"","","","");
+                                    $total=$total_income->somme("incomes",$pdo);
+                                    $_SESSION["total_income"] = $total;
+                                    if ($total === NULL) {
+                                        echo "<p id='totalIncome' class='text-3xl font-bold text-green-500'>0.00 MAD</p>";  
+                                    }
+                                    else{
+                                        echo "<p id='totalIncome' class='text-3xl font-bold text-green-500'>{$total} MAD</p>";  
+                                    }
+                                ?>
 
                             </div>
                             <div
@@ -194,7 +204,19 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Dépenses</p>
-                                <p id='totalExpense' class='text-3xl font-bold text-red-500'>78 MAD</p>";
+
+                                 <?php
+                                    $total_expense = new Expense("",$user_id,"","","","");
+                                    $total=$total_expense->somme("expenses",$pdo);
+                                    $_SESSION["total_expense"] = $total;
+                                    if ($total === NULL) {
+                                        echo "<p id='totalExpense' class='text-3xl font-bold text-red-500'>0.00 MAD</p>";  
+                                    }
+                                    else{
+                                        echo "<p id='totalExpense' class='text-3xl font-bold text-red-500'>{$total} MAD</p>";  
+                                    }
+                                ?>
+                                
                             </div>
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-red-100 to-rose-200 rounded-full flex items-center justify-center">
@@ -212,7 +234,20 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Solde Actuel</p>
-                                <p id='balance' class='text-3xl font-bold text-{$color}-700'>{$total} MAD</p>
+                                
+                                <?php
+                                    $solde = $_SESSION["total_income"] -$_SESSION["total_expense"] ;
+                                    unset($_SESSION["total_income"]);
+                                    unset($_SESSION["total_expense"]);
+                                    if ($solde <= 0) {
+                                        echo "<p id='balance' class='text-3xl font-bold text-red-700'>{$solde} MAD</p>";
+                                    }
+                                    else {
+                                        echo "<p id='balance' class='text-3xl font-bold text-green-700'>{$solde} MAD</p>";
+                                    }
+                                ?>
+                                
+                                
                             </div>
                             <div
                                 class='w-14 h-14 bg-gradient-to-br from-{$color}-100 to-indigo-100 rounded-full flex items-center justify-center'>
@@ -287,10 +322,10 @@
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
 
                                <?php
-                                    $income = new Income("",$user_id, "", "", "","");
-                                    $tables_incomes = $income->getByID("incomes", $pdo);
-                                    if (empty($tables_incomes)) {
-                                    echo "
+                                   $income         = new Income("", $user_id, "", "", "", "");
+                                   $tables_incomes = $income->getByID("incomes", $pdo);
+                                   if (empty($tables_incomes)) {
+                                       echo "
                                     <tr>
                                     <td colspan='5' class='px-4 py-16 text-center'>
                                     <div class='text-6xl mb-4 opacity-50'>💰</div>
@@ -298,10 +333,9 @@
                                     </td>
                                     </tr>
                                     ";
-                                    } 
-                                    else {
-                                    foreach ($tables_incomes as $income) {
-                                    echo "
+                                   } else {
+                                       foreach ($tables_incomes as $income) {
+                                           echo "
                                     <tr class='hover:bg-gray-50 transition-colors'>
                                     <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['category_name']}</td>
                                     <td class='w-[20%] px-4 py-4'>
@@ -312,7 +346,7 @@
                                     <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
                                     <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
                                     <td class='w-[20%] px-4 py-4'>
-                                    <form action='database.php' method='POST'>
+                                    <form action='delete_income.php' method='POST'>
                                     <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}'
                                     class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                     <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -328,8 +362,8 @@
                                     </td>
                                     </tr>
                                     ";
-                                    }
-                                    }
+                                       }
+                                   }
                                ?>
 
                             </tbody>
@@ -461,7 +495,7 @@
                             </thead>
                             <tbody id="expensesBody" class="divide-y divide-gray-200">
                             <?php
-                                $expense = new Expense("",$user_id, "", "", "","");
+                                $expense         = new Expense("", $user_id, "", "", "", "");
                                 $tables_expenses = $expense->getByID("expenses", $pdo);
                                 if (empty($tables_expenses)) {
                                     echo "
@@ -485,7 +519,7 @@
                                                 <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
                                                 <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
                                                 <td class='w-[20%] px-4 py-4'>
-                                                <form action='database.php' method='POST'>
+                                                <form action='delete_expense.php' method='POST'>
                                                     <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
                                                     class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
                                                         <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
