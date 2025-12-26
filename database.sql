@@ -28,7 +28,7 @@ CREATE TABLE if not exists incomes(
     category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
-    date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date DATE DEFAULT CURRENT_DATE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE if not exists expenses(
     category_name VARCHAR(20) NOT NULL,
     montants DECIMAL(10,2) not null check (montants > 0),
     description VARCHAR(35) not null,
-    date  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date DATE DEFAULT CURRENT_DATE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

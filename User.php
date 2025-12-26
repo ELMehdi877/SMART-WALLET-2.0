@@ -1,7 +1,7 @@
 <?php
-require "connection.php";
-require "Income.php";
-require "Expense.php";
+require_once __DIR__ . "/connection.php";
+require_once __DIR__ . "/Income.php";
+require_once __DIR__ . "/Expense.php";
 
 class User{
     // Visibilité (Access Modifiers) && attribute(proprieté)

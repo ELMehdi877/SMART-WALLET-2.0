@@ -1,5 +1,8 @@
 <?php 
-require "User.php";
+require_once __DIR__ . "/User.php";
+require_once __DIR__ . "/connection.php";
+require_once __DIR__ . "/Income.php";
+require_once __DIR__ . "/Expense.php";
 
 session_start();
 if (!isset($_SESSION["user_id"])) {

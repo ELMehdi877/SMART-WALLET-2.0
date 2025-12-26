@@ -11,12 +11,13 @@ class Transaction {
     protected $date; 
     
     #methode magic
-    public function __construct($id,$user_id,$category_name,$amount,$descriotion){
+    public function __construct($id,$user_id,$category_name,$amount,$descriotion,$date){
         $this->id = $id;
         $this->user_id = $user_id;
         $this->category_name = $category_name;
         $this->amount = $amount;
         $this->description = $descriotion;
+        $this->date = $date;
     }
 
     #### methode d'héritage Income && Expense
@@ -50,6 +51,7 @@ class Transaction {
             $this->category_name,
             $this->amount,
             $this->description,
+            $this->date,
             $this->user_id ,
             $this->id,
     ]);
