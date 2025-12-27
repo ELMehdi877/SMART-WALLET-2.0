@@ -42,11 +42,11 @@ class Transaction {
             $this->user_id,
             $this->category->category_name,
         ]);
-        $table = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if ($table === false) {
-            return ;
+        $table_filtre = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($table_filtre === false) {
+            return NULL;
         }
-        return $teble;
+        return $table_filtre;
 
     }
 

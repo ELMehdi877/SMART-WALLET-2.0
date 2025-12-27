@@ -280,7 +280,7 @@
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center ">
                             <div class="flex items-center w-full gap-2">
-                                <form action="filtrage_category.php" method="POST">
+                                <form action="filtre_category.php" method="POST">
                                     <select id="incomeCategory_filtre"  required name="income_filtre" onchange="this.form.submit()"
                                     class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
                                         <option value="" disabled selected>Choisir une catégorie</option>
@@ -327,49 +327,98 @@
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
 
                                <?php
+
                                     $category = new Category("");
                                     $income = new Income(0,$user_id,$category,0,"","");
                                     $tables_incomes = $income->getByID("incomes", $pdo);
-                                    if (empty($tables_incomes)) {
-                                       echo "
-                                    <tr>
-                                    <td colspan='5' class='px-4 py-16 text-center'>
-                                    <div class='text-6xl mb-4 opacity-50'>💰</div>
-                                    <p class='text-gray-400'>Aucun revenu enregistré</p>
-                                    </td>
-                                    </tr>
-                                    ";
-                                   } else {
-                                       foreach ($tables_incomes as $income) {
-                                           echo "
-                                    <tr class='hover:bg-gray-50 transition-colors'>
-                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['category_name']}</td>
-                                    <td class='w-[20%] px-4 py-4'>
-                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-800'>
-                                    {$income['montants']} DH
-                                    </span>
-                                    </td>
-                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
-                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
-                                    <td class='w-[20%] px-4 py-4'>
-                                    <form action='delete_income.php' method='POST'>
-                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}'
-                                    class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
-                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
-                                    </svg>
-                                    </button>
-                                    <button type='submit' name='incomeDelete' value={$income['id']} class='text-red-600 hover:text-red-800 transition-colors'>
-                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
-                                    </svg>
-                                    </button>
-                                    </form>
-                                    </td>
-                                    </tr>
-                                    ";
-                                       }
-                                   }
+                                    if (isset($_SESSION["filtre_income"])) {
+                                        if (empty($_SESSION["filtre_income"])) {
+                                            echo "
+                                                <tr>
+                                                <td colspan='5' class='px-4 py-16 text-center'>
+                                                <div class='text-6xl mb-4 opacity-50'>💰</div>
+                                                <p class='text-gray-400'>Aucun revenu enregistré</p>
+                                                </td>
+                                                </tr>
+                                            ";  
+                                        }
+                                        else {
+                                            $income_filtre = $_SESSION["filtre_income"];
+                                            foreach ($income_filtre as $income) {
+                                                echo "
+                                                    <tr class='hover:bg-gray-50 transition-colors'>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['category_name']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-800'>
+                                                    {$income['montants']} DH
+                                                    </span>
+                                                    </td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <form action='delete_income.php' method='POST'>
+                                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}'
+                                                    class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                    </svg>
+                                                    </button>
+                                                    <button type='submit' name='incomeDelete' value={$income['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                    </svg>
+                                                    </button>
+                                                    </form>
+                                                    </td>
+                                                    </tr>
+                                                ";
+                                            }
+                                        }
+                                        unset($_SESSION["filtre_income"]);
+                                    }
+                                    else {
+                                        if (empty($tables_incomes) ) {
+                                            echo "
+                                                <tr>
+                                                <td colspan='5' class='px-4 py-16 text-center'>
+                                                <div class='text-6xl mb-4 opacity-50'>💰</div>
+                                                <p class='text-gray-400'>Aucun revenu enregistré</p>
+                                                </td>
+                                                </tr>
+                                            ";
+                                        } 
+                                        else {
+                                            foreach ($tables_incomes as $income) {
+                                                echo "
+                                                    <tr class='hover:bg-gray-50 transition-colors'>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$income['category_name']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-800'>
+                                                    {$income['montants']} DH
+                                                    </span>
+                                                    </td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['description']}</td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$income['date']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <form action='delete_income.php' method='POST'>
+                                                    <button type='button' data-id='{$income['id']}' data-categorie='{$income['category_name']}' data-montants='{$income['montants']}' data-description = '{$income['description']}' data-date = '{$income['date']}'
+                                                    class='incomeModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                    </svg>
+                                                    </button>
+                                                    <button type='submit' name='incomeDelete' value={$income['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                    <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                    <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                    </svg>
+                                                    </button>
+                                                    </form>
+                                                    </td>
+                                                    </tr>
+                                                ";
+                                           }
+                                        }
+                                    }
                                ?>
 
                             </tbody>
@@ -392,7 +441,7 @@
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center">
                             <div class="flex items-center w-full gap-2">
-                                <form action="filtrage_category.php" method="POST">
+                                <form action="filtre_category.php" method="POST">
                                     <select id="expenseCategory_filtre" required name="expense_filtre" onchange="this.form.submit()" 
                                         class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
 
@@ -506,44 +555,92 @@
                                 $category = new Category("");
                                 $expense = new Expense(0,$user_id,$category,0,"","");
                                 $tables_expenses = $expense->getByID("expenses", $pdo);
-                                if (empty($tables_expenses)) {
-                                    echo "
-                                        <tr>
-                                            <td colspan='5' class='px-4 py-16 text-center'>
-                                                <div class='text-6xl mb-4 opacity-50'>🛒</div>
-                                                <p class='text-gray-400'>Aucune dépense enregistrée</p>
-                                            </td>
-                                        </tr>
-                                    ";
-                                } else {
-                                    foreach ($tables_expenses as $expense) {
+                                if (isset($_SESSION["filtre_expense"])) {
+                                    if (empty($_SESSION["filtre_expense"])) {
                                         echo "
-                                             <tr class='hover:bg-gray-50 transition-colors'>
-                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['category_name']}</td>
-                                                <td class='w-[20%] px-4 py-4'>
-                                                    <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800'>
-                                                        {$expense['montants']} DH
-                                                    </span>
-                                                </td>
-                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
-                                                <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
-                                                <td class='w-[20%] px-4 py-4'>
-                                                <form action='delete_expense.php' method='POST'>
-                                                    <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
-                                                    class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
-                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
-                                                        </svg>
-                                                    </button>
-                                                    <button type='submit' name='expenseDelete' value={$expense['id']} class='text-red-600 hover:text-red-800 transition-colors'>
-                                                        <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
-                                                        </svg>
-                                                    </button>
-                                                    </form>
+                                            <tr>
+                                                <td colspan='5' class='px-4 py-16 text-center'>
+                                                    <div class='text-6xl mb-4 opacity-50'>🛒</div>
+                                                    <p class='text-gray-400'>Aucune dépense enregistrée</p>
                                                 </td>
                                             </tr>
                                         ";
+                                    } 
+                                    else {
+                                        $expense_filtre = $_SESSION["filtre_expense"];
+                                        foreach ($expense_filtre as $expense) {
+                                            echo "
+                                                <tr class='hover:bg-gray-50 transition-colors'>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['category_name']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                        <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800'>
+                                                            {$expense['montants']} DH
+                                                        </span>
+                                                    </td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <form action='delete_expense.php' method='POST'>
+                                                        <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
+                                                        class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                            <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                            </svg>
+                                                        </button>
+                                                        <button type='submit' name='expenseDelete' value={$expense['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                            <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                            </svg>
+                                                        </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            ";
+                                        }
+                                    }
+                                    unset($_SESSION["filtre_expense"]);
+                                }
+                                else {
+                                    if (empty($tables_expenses)) {
+                                        echo "
+                                            <tr>
+                                                <td colspan='5' class='px-4 py-16 text-center'>
+                                                    <div class='text-6xl mb-4 opacity-50'>🛒</div>
+                                                    <p class='text-gray-400'>Aucune dépense enregistrée</p>
+                                                </td>
+                                            </tr>
+                                        ";
+                                    } 
+                                    else {
+                                        foreach ($tables_expenses as $expense) {
+                                            echo "
+                                                <tr class='hover:bg-gray-50 transition-colors'>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-800'>{$expense['category_name']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                        <span class='inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-800'>
+                                                            {$expense['montants']} DH
+                                                        </span>
+                                                    </td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['description']}</td>
+                                                    <td class='w-[20%] px-4 py-4 text-sm text-gray-600'>{$expense['date']}</td>
+                                                    <td class='w-[20%] px-4 py-4'>
+                                                    <form action='delete_expense.php' method='POST'>
+                                                        <button type='button'  data-id='{$expense['id']}' data-categorie='{$expense['category_name']}' data-montants='{$expense['montants']}' data-description = '{$expense['description']}' data-date = '{$expense['date']}'
+                                                        class='expenseModifie text-blue-600 hover:text-blue-800 mr-3 transition-colors'>
+                                                            <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                                                            </svg>
+                                                        </button>
+                                                        <button type='submit' name='expenseDelete' value={$expense['id']} class='text-red-600 hover:text-red-800 transition-colors'>
+                                                            <svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                                                            </svg>
+                                                        </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            ";
+                                        }
                                     }
                                 }
                             ?>

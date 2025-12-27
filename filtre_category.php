@@ -2,6 +2,7 @@
 require_once __DIR__ . "/connection.php";
 require_once __DIR__ . "/Transaction.php";
 require_once __DIR__ . "/Income.php";
+require_once __DIR__ . "/Expense.php";
 require_once __DIR__ . "/Category.php";
 
 
@@ -17,6 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $income = new Income(0,$user_id,$category,0.0,"","");
         $table_income = $income->getByCategory("incomes",$pdo);
         $_SESSION["filtre_income"] = $table_income;
+        header("Location: dashbord.php");
+        exit();
     }
 
     if (isset($_POST["expense_filtre"])) {
@@ -24,6 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $expense = new Expense(0,$user_id,$category,0.0,"","");
         $table_expense = $expense->getByCategory("expenses",$pdo);
         $_SESSION["filtre_expense"] = $table_expense;
+        header("Location: dashbord.php");
+        exit();
     }
 
 }
