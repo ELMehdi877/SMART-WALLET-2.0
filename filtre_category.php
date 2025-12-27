@@ -13,7 +13,12 @@ if (!isset($_SESSION["user_id"])) {
 }
 $user_id = $_SESSION["user_id"];
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["income_filtre"])) {
+    if (isset($_POST["income_filtre"]) && $_POST["income_filtre"] === "ALL") {
+       
+        header("Location: dashbord.php");
+        exit();
+    }
+    elseif (isset($_POST["income_filtre"])) {
         $category = new Category($_POST["income_filtre"]);
         $income = new Income(0,$user_id,$category,0.0,"","");
         $table_income = $income->getByCategory("incomes",$pdo);
@@ -22,7 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    if (isset($_POST["expense_filtre"])) {
+    if (isset($_POST["expense_filtre"]) && $_POST["expense_filtre"] ==="ALL" ) {
+      
+        header("Location: dashbord.php");
+        exit();
+    }
+    elseif (isset($_POST["expense_filtre"])) {
         $category = new Category($_POST["expense_filtre"]);
         $expense = new Expense(0,$user_id,$category,0.0,"","");
         $table_expense = $expense->getByCategory("expenses",$pdo);
