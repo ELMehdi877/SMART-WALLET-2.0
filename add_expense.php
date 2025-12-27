@@ -13,8 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_expense"])) {
             $_SESSION["expenseAmount"] = "le montants que vous avez insairé ".$_POST["expenseAmount"]." et incorrect";
         }
         else {
+            $_SESSION["income_info"][]=[$user_id,$_POST["expenseCategory"],$_POST["expenseAmount"],$_POST["expenseDesc"],$_POST["expenseDate"]];
+            $category = new Category($_POST["expenseCategory"]);
             $user = new User($user_id,'','','');
-            $user->addExpense($_POST["expenseCategory"],$_POST["expenseAmount"],$_POST["expenseDesc"],$_POST["expenseDate"],$pdo);
+            $user->addExpense($category,$_POST["expenseAmount"],$_POST["expenseDesc"],$_POST["expenseDate"],$pdo);
         }
     }
     header("Location: dashbord.php");

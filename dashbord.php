@@ -9,6 +9,7 @@
     // require "Transaction.php";
     require_once __DIR__ . "/Income.php";
     require_once __DIR__ . "/Expense.php";
+    require_once __DIR__ . "/Category.php";
 
 ?>
 <!DOCTYPE html>
@@ -176,7 +177,8 @@
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Revenus</p>
 
                                  <?php
-                                    $total_income = new Income("",$user_id,"","","","");
+                                    $category = new Category("");
+                                    $total_income = new Income(0,$user_id,$category,0,"","");
                                     $total=$total_income->somme("incomes",$pdo);
                                     $_SESSION["total_income"] = $total;
                                     if ($total === NULL) {
@@ -206,7 +208,8 @@
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Dépenses</p>
 
                                  <?php
-                                    $total_expense = new Expense("",$user_id,"","","","");
+                                    $category = new Category("");
+                                    $total_expense = new Expense(0,$user_id,$category,0,"","");
                                     $total=$total_expense->somme("expenses",$pdo);
                                     $_SESSION["total_expense"] = $total;
                                     if ($total === NULL) {
@@ -277,15 +280,17 @@
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center ">
                             <div class="flex items-center w-full gap-2">
-                                <select id="incomeCategory_filtre"  required
-                                class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
-                                    <option value="" disabled selected>Choisir une catégorie</option>
-                                    <option value="ALL">ALL</option>
-                                    <option value="Salaire">Salaire</option>
-                                    <option value="Prime">Prime</option>
-                                    <option value="Bonus">Bonus</option>
-                                    <option value="Revenus freelancing">Revenus freelancing</option>
-                                </select>
+                                <form action="filtrage_category.php" method="POST">
+                                    <select id="incomeCategory_filtre"  required name="income_filtre" onchange="this.form.submit()"
+                                    class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
+                                        <option value="" disabled selected>Choisir une catégorie</option>
+                                        <option value="ALL">ALL</option>
+                                        <option value="Salaire">Salaire</option>
+                                        <option value="Prime">Prime</option>
+                                        <option value="Bonus">Bonus</option>
+                                        <option value="Revenus freelancing">Revenus freelancing</option>
+                                    </select>
+                                </form>
                                 <input type="date" id="incomeDate_filtre" class="flex-1 min-w-[120px] text-xs sm:text-sm font-semibold py-2 px-2 sm:px-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
                             </div>
 
@@ -322,9 +327,10 @@
                             <tbody id="incomesBody" class="divide-y divide-gray-200">
 
                                <?php
-                                   $income         = new Income("", $user_id, "", "", "", "");
-                                   $tables_incomes = $income->getByID("incomes", $pdo);
-                                   if (empty($tables_incomes)) {
+                                    $category = new Category("");
+                                    $income = new Income(0,$user_id,$category,0,"","");
+                                    $tables_incomes = $income->getByID("incomes", $pdo);
+                                    if (empty($tables_incomes)) {
                                        echo "
                                     <tr>
                                     <td colspan='5' class='px-4 py-16 text-center'>
@@ -386,80 +392,82 @@
                         </div>
                         <div class="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-center">
                             <div class="flex items-center w-full gap-2">
-                                <select id="expenseCategory_filtre" required
-                                    class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
+                                <form action="filtrage_category.php" method="POST">
+                                    <select id="expenseCategory_filtre" required name="expense_filtre" onchange="this.form.submit()" 
+                                        class="flex-1 min-w-[140px] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-2 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
 
-                                    <option value="" disabled selected>Choisir une catégorie</option>
-                                    <option value="ALL">ALL</option>
+                                        <option value="" disabled selected>Choisir une catégorie</option>
+                                        <option value="ALL">ALL</option>
 
-                                    <optgroup label="🏠 Logement & Charges">
-                                        <option value="Loyer">Loyer</option>
-                                        <option value="Crédit immobilier">Crédit immobilier</option>
-                                        <option value="Électricité">Électricité</option>
-                                        <option value="Eau">Eau</option>
-                                        <option value="Gaz">Gaz</option>
-                                        <option value="Internet">Internet</option>
-                                        <option value="Chauffage">Chauffage</option>
-                                        <option value="Charges de copropriété">Charges de copropriété</option>
-                                    </optgroup>
+                                        <optgroup label="🏠 Logement & Charges">
+                                            <option value="Loyer">Loyer</option>
+                                            <option value="Crédit immobilier">Crédit immobilier</option>
+                                            <option value="Électricité">Électricité</option>
+                                            <option value="Eau">Eau</option>
+                                            <option value="Gaz">Gaz</option>
+                                            <option value="Internet">Internet</option>
+                                            <option value="Chauffage">Chauffage</option>
+                                            <option value="Charges de copropriété">Charges de copropriété</option>
+                                        </optgroup>
 
-                                    <optgroup label="🚗 Transport">
-                                        <option value="Carburant">Carburant</option>
-                                        <option value="Transport public">Transport public</option>
-                                        <option value="Assurance auto">Assurance auto</option>
-                                        <option value="Réparations véhicule">Réparations véhicule</option>
-                                        <option value="Entretien véhicule">Entretien véhicule</option>
-                                        <option value="Stationnement">Stationnement</option>
-                                        <option value="Taxes routières">Taxes routières</option>
-                                    </optgroup>
+                                        <optgroup label="🚗 Transport">
+                                            <option value="Carburant">Carburant</option>
+                                            <option value="Transport public">Transport public</option>
+                                            <option value="Assurance auto">Assurance auto</option>
+                                            <option value="Réparations véhicule">Réparations véhicule</option>
+                                            <option value="Entretien véhicule">Entretien véhicule</option>
+                                            <option value="Stationnement">Stationnement</option>
+                                            <option value="Taxes routières">Taxes routières</option>
+                                        </optgroup>
 
-                                    <optgroup label="🍔 Nourriture & Nécessités">
-                                        <option value="Courses alimentaires">Courses alimentaires</option>
-                                        <option value="Eau potable">Eau potable</option>
-                                        <option value="Produits d’hygiène">Produits d’hygiène</option>
-                                        <option value="Produits de nettoyage">Produits de nettoyage</option>
-                                    </optgroup>
+                                        <optgroup label="🍔 Nourriture & Nécessités">
+                                            <option value="Courses alimentaires">Courses alimentaires</option>
+                                            <option value="Eau potable">Eau potable</option>
+                                            <option value="Produits d’hygiène">Produits d’hygiène</option>
+                                            <option value="Produits de nettoyage">Produits de nettoyage</option>
+                                        </optgroup>
 
-                                    <optgroup label="❤️ Santé">
-                                        <option value="Médicaments">Médicaments</option>
-                                        <option value="Consultations médicales">Consultations médicales</option>
-                                        <option value="Analyses et examens">Analyses et examens</option>
-                                        <option value="Lunettes / Lentilles">Lunettes / Lentilles</option>
-                                        <option value="Assurance santé">Assurance santé</option>
-                                    </optgroup>
+                                        <optgroup label="❤️ Santé">
+                                            <option value="Médicaments">Médicaments</option>
+                                            <option value="Consultations médicales">Consultations médicales</option>
+                                            <option value="Analyses et examens">Analyses et examens</option>
+                                            <option value="Lunettes / Lentilles">Lunettes / Lentilles</option>
+                                            <option value="Assurance santé">Assurance santé</option>
+                                        </optgroup>
 
-                                    <optgroup label="🎓 Éducation">
-                                        <option value="Frais de scolarité">Frais de scolarité</option>
-                                        <option value="Livres">Livres</option>
-                                        <option value="Fournitures scolaires">Fournitures scolaires</option>
-                                        <option value="Formations / Cours">Formations / Cours</option>
-                                        <option value="Transport scolaire">Transport scolaire</option>
-                                    </optgroup>
+                                        <optgroup label="🎓 Éducation">
+                                            <option value="Frais de scolarité">Frais de scolarité</option>
+                                            <option value="Livres">Livres</option>
+                                            <option value="Fournitures scolaires">Fournitures scolaires</option>
+                                            <option value="Formations / Cours">Formations / Cours</option>
+                                            <option value="Transport scolaire">Transport scolaire</option>
+                                        </optgroup>
 
-                                    <optgroup label="📡 Communication">
-                                        <option value="Téléphone mobile">Téléphone mobile</option>
-                                        <option value="Internet mobile">Internet mobile</option>
-                                        <option value="Recharges">Recharges</option>
-                                    </optgroup>
+                                        <optgroup label="📡 Communication">
+                                            <option value="Téléphone mobile">Téléphone mobile</option>
+                                            <option value="Internet mobile">Internet mobile</option>
+                                            <option value="Recharges">Recharges</option>
+                                        </optgroup>
 
-                                    <optgroup label="🧾 Impôts & Taxes">
-                                        <option value="Impôt sur le revenu">Impôt sur le revenu</option>
-                                        <option value="Taxe d’habitation">Taxe d’habitation</option>
-                                        <option value="Amendes">Amendes</option>
-                                    </optgroup>
+                                        <optgroup label="🧾 Impôts & Taxes">
+                                            <option value="Impôt sur le revenu">Impôt sur le revenu</option>
+                                            <option value="Taxe d’habitation">Taxe d’habitation</option>
+                                            <option value="Amendes">Amendes</option>
+                                        </optgroup>
 
-                                    <optgroup label="🛡️ Assurances">
-                                        <option value="Assurance habitation">Assurance habitation</option>
-                                        <option value="Assurance auto">Assurance auto</option>
-                                        <option value="Assurance vie">Assurance vie</option>
-                                    </optgroup>
+                                        <optgroup label="🛡️ Assurances">
+                                            <option value="Assurance habitation">Assurance habitation</option>
+                                            <option value="Assurance auto">Assurance auto</option>
+                                            <option value="Assurance vie">Assurance vie</option>
+                                        </optgroup>
 
-                                    <optgroup label="💳 Dettes & Crédits">
-                                        <option value="Remboursement crédit">Remboursement crédit</option>
-                                        <option value="Remboursement prêt">Remboursement prêt</option>
-                                        <option value="Intérêts bancaires">Intérêts bancaires</option>
-                                    </optgroup>
-                                </select>
+                                        <optgroup label="💳 Dettes & Crédits">
+                                            <option value="Remboursement crédit">Remboursement crédit</option>
+                                            <option value="Remboursement prêt">Remboursement prêt</option>
+                                            <option value="Intérêts bancaires">Intérêts bancaires</option>
+                                        </optgroup>
+                                    </select>    
+                                </form>
                                 <input type="date" id="expenseDate_filtre" class="flex-1 min-w-[120px] text-xs sm:text-sm font-semibold py-2 px-2 sm:px-3 border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all outline-none">
                             </div>
                             <button onclick="openModal('expenseModal')"
@@ -495,7 +503,8 @@
                             </thead>
                             <tbody id="expensesBody" class="divide-y divide-gray-200">
                             <?php
-                                $expense         = new Expense("", $user_id, "", "", "", "");
+                                $category = new Category("");
+                                $expense = new Expense(0,$user_id,$category,0,"","");
                                 $tables_expenses = $expense->getByID("expenses", $pdo);
                                 if (empty($tables_expenses)) {
                                     echo "

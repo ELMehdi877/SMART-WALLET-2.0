@@ -17,8 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_income"])) {
         }
         else {
             $_SESSION["income_info"][]=[$user_id,$_POST["incomeCategory"],$_POST["incomeAmount"],$_POST["incomeDesc"]];
+            $category = new Category($_POST["incomeCategory"]);
             $user = new User($user_id,'','','');
-            $user->addIncome($_POST["incomeCategory"],$_POST["incomeAmount"],$_POST["incomeDesc"],$_POST["incomeDate"],$pdo);
+            $user->addIncome($category,$_POST["incomeAmount"],$_POST["incomeDesc"],$_POST["incomeDate"],$pdo);
        }
     }
     header("Location: dashbord.php");

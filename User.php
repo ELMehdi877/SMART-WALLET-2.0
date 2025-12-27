@@ -2,6 +2,7 @@
 require_once __DIR__ . "/connection.php";
 require_once __DIR__ . "/Income.php";
 require_once __DIR__ . "/Expense.php";
+require_once __DIR__ . "/Category.php";
 
 class User{
     // Visibilité (Access Modifiers) && attribute(proprieté)
@@ -13,8 +14,8 @@ class User{
     ### composition de user avec category
 
     //tableau contient tous les categories de l'utilisateur
-    private $incomes = [];
-    private $expenses = [];
+    // private $incomes = [];
+    // private $expenses = [];
 
     //fonction pour remplie les proprieté
     public function __construct($id,$full_name,$em_ail,$pass_word){
@@ -91,34 +92,34 @@ class User{
     // }
 
     ### income
-    public function addIncome(string $category_name,float $montants,string $description,string $income_date,PDO $pdo){
+    public function addIncome(Category $category,float $montants,string $description,string $income_date,PDO $pdo){
         
             $sql = "INSERT INTO incomes(user_id,category_name,montants,description,date) VALUES (?,?,?,?,?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $this->id,
-                $category_name,
+                $category->category_name,
                 $montants,
                 $description,
                 $income_date
             ]);
-            $income = new Income($this->id,"",$category_name,$montants,$description,$income_date);
-            $this->incomes[] = $income;
+            $income = new Income(0,$this->id,$category,$montants,$description,$income_date);
+            // $this->incomes[] = $income;
     }
 
      ### expense
-    public function addExpense(string $category_name,float $montants,string $description,string $expense_date,PDO $pdo){
+    public function addExpense(Category $category,float $montants,string $description,string $expense_date,PDO $pdo){
         
             $sql = "INSERT INTO expenses(user_id,category_name,montants,description,date) VALUES (?,?,?,?,?)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
                 $this->id,
-                $category_name,
+                $category->category_name,
                 $montants,
                 $description,
                 $expense_date
             ]);
-            $expense = new Expense($this->id,"",$category_name,$montants,$description,$expense_date);
-            $this->expenses[] = $expense;
+            $expense = new Expense(0,$this->id,$category,$montants,$description,$expense_date);
+            // $this->expenses[] = $expense;
     }
 }

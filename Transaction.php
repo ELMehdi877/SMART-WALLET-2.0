@@ -3,20 +3,20 @@
 #class Transaction
 class Transaction {
     // Visibilité (Access Modifiers) && attribute(proprieté)
-    protected $id;
-    protected $user_id;
-    protected $category_name;
-    protected $amount;
-    protected $description; 
-    protected $date; 
+    protected int $id;
+    protected int $user_id;
+    protected Category $category;
+    protected float $amount;
+    protected string $description; 
+    protected string $date; 
     
     #methode magic
-    public function __construct($id,$user_id,$category_name,$amount,$descriotion,$date){
+    public function __construct(int $id, int $user_id,Category $category,float $amount,string $description,string $date){
         $this->id = $id;
         $this->user_id = $user_id;
-        $this->category_name = $category_name;
+        $this->category = $category;
         $this->amount = $amount;
-        $this->description = $descriotion;
+        $this->description = $description;
         $this->date = $date;
     }
 
@@ -35,21 +35,26 @@ class Transaction {
     }
 
     //insertion income ou expense
-    public function getByCategory($table,$user_id){
+    public function getByCategory(string $table,PDO $pdo) : ?array{
         $sql = "SELECT * FROM $table WHERE user_id = ? AND category_name = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->exectute([
-            $table,
+        $stmt->execute([
             $this->user_id,
-            $this->category_name,
+            $this->category->category_name,
         ]);
+        $table = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($table === false) {
+            return ;
+        }
+        return $teble;
+
     }
 
     public function update(string $table,PDO $pdo){
         $sql = "UPDATE $table SET category_name = ?, montants = ?, description = ?, date = ? WHERE user_id = ? AND id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            $this->category_name,
+            $this->category->category_name,
             $this->amount,
             $this->description,
             $this->date,
